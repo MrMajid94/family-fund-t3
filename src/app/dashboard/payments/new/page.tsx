@@ -1,7 +1,7 @@
 "use client";
 
 import { api } from "@/trpc/react";
-import { authClient } from "@/lib/auth-client";
+import { authClient } from "@/server/better-auth/client";
 import { useState, useMemo, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";

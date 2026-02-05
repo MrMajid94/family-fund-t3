@@ -1,7 +1,7 @@
 "use client";
 
 import { api } from "@/trpc/react";
-import { authClient } from "@/lib/auth-client";
+import { authClient } from "@/server/better-auth/client";
 import { format } from "date-fns";
 import { ar } from "date-fns/locale";
 import { useState } from "react";

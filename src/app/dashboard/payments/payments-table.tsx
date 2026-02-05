@@ -20,7 +20,7 @@ import { format } from "date-fns";
 import { ExternalLink, Edit, Trash2 } from "lucide-react";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
-import { authClient } from "@/lib/auth-client";
+import { authClient } from "@/server/better-auth/client";
 
 interface Payment {
   id: string;
