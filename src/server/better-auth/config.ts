@@ -21,6 +21,17 @@ export const auth = betterAuth({
     }),
     admin(),
   ],
+  callbacks: {
+    session: async ({ session, user }: { session: any; user: any }) => {
+      return {
+        ...session,
+        user: {
+          ...session.user,
+          role: user.role,
+        },
+      };
+    },
+  },
 });
 
 export type Session = typeof auth.$Infer.Session;

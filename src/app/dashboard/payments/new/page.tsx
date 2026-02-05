@@ -66,7 +66,7 @@ function isMonthOverdue(monthStr: string): boolean {
 export default function NewPaymentPage() {
   const router = useRouter();
   const { data: session } = authClient.useSession();
-  // @ts-ignore - role exists on user
+  // role exists on user now
   const isAdmin = session?.user?.role === "admin";
   const currentUserId = session?.user?.id ?? "";
 
