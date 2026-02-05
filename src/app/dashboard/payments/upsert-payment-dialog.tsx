@@ -41,7 +41,7 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover";
 import { toast } from "sonner";
-import { authClient } from "@/lib/auth-client";
+import { authClient } from "@/server/better-auth/client";
 
 const formSchema = z.object({
   userId: z.string().min(1, "المستخدم مطلوب"),
