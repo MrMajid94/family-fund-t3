@@ -2,7 +2,6 @@
 
 import { useState } from "react";
 import { api } from "@/trpc/react";
-import { PaymentsTable } from "./payments-table";
 import { PaymentsStats } from "./payments-stats";
 import { MonthlyPaymentsChart } from "./monthly-chart";
 import { Button } from "@/components/ui/button";
@@ -20,6 +19,7 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
+import { PaymentsTable } from "./payments-table";
 
 export default function PaymentsClientPage() {
   const [page, setPage] = useState(1);
@@ -106,9 +106,9 @@ export default function PaymentsClientPage() {
       <div className="flex items-center justify-between">
         <h1 className="text-2xl font-bold">المدفوعات</h1>
         <div className="flex gap-2">
-            <Button onClick={handleCreate} className="gap-2">
+            {/* <Button onClick={handleCreate} className="gap-2">
                 تسجيل دفع
-            </Button>
+            </Button> */}
             <Button onClick={handleExport} variant="outline" className="gap-2">
             <Download className="h-4 w-4" />
             تحميل إكسل
