@@ -88,7 +88,7 @@ export default function Hero() {
           </CardContent>
         </Card>
 
-        <div className="mt-8 flex items-center justify-center">
+        {/* <div className="mt-8 flex items-center justify-center">
           <Button
             asChild
             className="rounded-full text-base shadow-none"
@@ -99,7 +99,7 @@ export default function Hero() {
               <ArrowLeft className="h-5! w-5! ms-2 rtl:rotate-180" /> المزيد عن الصندوق
             </Link>
           </Button>
-        </div>
+        </div> */}
       </div>
     </div>
   );

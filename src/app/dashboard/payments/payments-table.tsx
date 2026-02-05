@@ -17,8 +17,10 @@ import {
   PaginationPrevious,
 } from "@/components/ui/pagination";
 import { format } from "date-fns";
-import { ExternalLink } from "lucide-react";
+import { ExternalLink, Edit, Trash2 } from "lucide-react";
 import Link from "next/link";
+import { Button } from "@/components/ui/button";
+import { authClient } from "@/lib/auth-client";
 
 interface Payment {
   id: string;
@@ -30,6 +32,7 @@ interface Payment {
   user: {
     name: string;
   };
+  createdById: string;
 }
 
 interface PaymentsTableProps {
@@ -38,6 +41,8 @@ interface PaymentsTableProps {
   currentPage: number;
   totalPages: number;
   onPageChange: (page: number) => void;
+  onEdit: (payment: Payment) => void;
+  onDelete: (id: string) => void;
 }
 
 export function PaymentsTable({
@@ -46,7 +51,12 @@ export function PaymentsTable({
   currentPage,
   totalPages,
   onPageChange,
+  onEdit,
+  onDelete,
 }: PaymentsTableProps) {
+  const { data: session } = authClient.useSession();
+  const isAdmin = (session?.user as any)?.role === "admin";
+
   if (isLoading) {
     return <div>جاري التحميل...</div>;
   }
@@ -92,12 +102,13 @@ export function PaymentsTable({
               <TableHead className="text-right">عن شهر</TableHead>
               <TableHead className="text-right">ملاحظة</TableHead>
               <TableHead className="text-right">الإيصال</TableHead>
+              <TableHead className="text-right">إجراءات</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
             {payments.length === 0 ? (
               <TableRow>
-                <TableCell colSpan={6} className="text-center h-24">
+                <TableCell colSpan={7} className="text-center h-24">
                   لا توجد مدفوعات
                 </TableCell>
               </TableRow>
@@ -106,8 +117,8 @@ export function PaymentsTable({
                 <TableRow key={payment.id}>
                   <TableCell className="font-medium">{payment.user.name}</TableCell>
                   <TableCell>{payment.amount} ر.ع.</TableCell>
-                  <TableCell>{format(payment.paymentDate, "dd/MM/yyyy")}</TableCell>
-                  <TableCell>{format(payment.paymentForMonth, "MM/yyyy")}</TableCell>
+                  <TableCell>{format(new Date(payment.paymentDate), "dd/MM/yyyy")}</TableCell>
+                  <TableCell>{format(new Date(payment.paymentForMonth), "MM/yyyy")}</TableCell>
                   <TableCell className="max-w-[200px] truncate" title={payment.note ?? ""}>
                     {payment.note || "-"}
                   </TableCell>
@@ -123,6 +134,18 @@ export function PaymentsTable({
                       </Link>
                     ) : (
                       "-"
+                    )}
+                  </TableCell>
+                  <TableCell>
+                    {(isAdmin || payment.createdById === session?.user?.id) && (
+                        <div className="flex items-center gap-2">
+                            <Button size="icon" variant="ghost" onClick={() => onEdit(payment)}>
+                                <Edit className="h-4 w-4" />
+                            </Button>
+                            <Button size="icon" variant="ghost" className="text-red-500 hover:text-red-600 hover:bg-red-50" onClick={() => onDelete(payment.id)}>
+                                <Trash2 className="h-4 w-4" />
+                            </Button>
+                        </div>
                     )}
                   </TableCell>
                 </TableRow>

@@ -28,23 +28,30 @@ export const paymentRouter = createTRPCRouter({
       })
     )
     .query(async ({ ctx, input }) => {
-      // Check if user is admin
-      if (ctx.session.user.role !== "admin") {
-        throw new Error("Unauthorized");
-      }
-
       const { page, pageSize } = input;
       const offset = (page - 1) * pageSize;
+
+      const whereClause =
+        ctx.session.user.role === "admin"
+          ? undefined
+          : (payments: any, { eq }: any) =>
+              eq(payments.createdById, ctx.session.user.id);
 
       // Get total count
       const [countResult] = await ctx.db
         .select({ total: count() })
-        .from(payment);
+        .from(payment)
+        .where(
+            ctx.session.user.role === "admin"
+            ? undefined
+            : sql`${payment.createdById} = ${ctx.session.user.id}`
+        );
       const totalCount = countResult?.total ?? 0;
       const totalPages = Math.ceil(totalCount / pageSize);
 
       // Get paginated payments
       const payments = await ctx.db.query.payment.findMany({
+        where: whereClause,
         orderBy: [desc(payment.paymentDate)],
         with: {
           user: true,
@@ -63,10 +70,10 @@ export const paymentRouter = createTRPCRouter({
 
   // Get payment statistics
   getStats: protectedProcedure.query(async ({ ctx }) => {
-    // Check if user is admin
-    if (ctx.session.user.role !== "admin") {
-      throw new Error("Unauthorized");
-    }
+    const whereClause =
+      ctx.session.user.role === "admin"
+        ? undefined
+        : sql`${payment.createdById} = ${ctx.session.user.id}`;
 
     // Get total count and sum
     const [totals] = await ctx.db
@@ -74,7 +81,8 @@ export const paymentRouter = createTRPCRouter({
         totalPayments: count(),
         totalAmount: sql<string>`COALESCE(SUM(CAST(${payment.amount} AS DECIMAL)), 0)`,
       })
-      .from(payment);
+      .from(payment)
+      .where(whereClause);
 
     // Get monthly aggregations for the chart
     const monthlyData = await ctx.db
@@ -84,6 +92,7 @@ export const paymentRouter = createTRPCRouter({
         amount: sql<string>`SUM(CAST(${payment.amount} AS DECIMAL))`,
       })
       .from(payment)
+      .where(whereClause)
       .groupBy(sql`TO_CHAR(${payment.paymentForMonth}, 'YYYY-MM')`)
       .orderBy(sql`TO_CHAR(${payment.paymentForMonth}, 'YYYY-MM')`);
 
@@ -150,12 +159,14 @@ export const paymentRouter = createTRPCRouter({
 
   // Export all payments for Excel
   exportAll: protectedProcedure.query(async ({ ctx }) => {
-    // Check if user is admin
-    if (ctx.session.user.role !== "admin") {
-      throw new Error("Unauthorized");
-    }
+    const whereClause =
+      ctx.session.user.role === "admin"
+        ? undefined
+        : (payments: any, { eq }: any) =>
+            eq(payments.createdById, ctx.session.user.id);
 
     const allPayments = await ctx.db.query.payment.findMany({
+      where: whereClause,
       orderBy: [desc(payment.paymentDate)],
       with: {
         user: true,
@@ -249,5 +260,72 @@ export const paymentRouter = createTRPCRouter({
       }
 
       return { success: true, paymentIds: createdPayments };
+    }),
+
+  // Update payment
+  update: protectedProcedure
+    .input(
+      z.object({
+        id: z.string(),
+        amount: z.string().optional(),
+        paymentForMonth: z.date().optional(),
+        note: z.string().optional(),
+        proof: z.string().optional(),
+      })
+    )
+    .mutation(async ({ ctx, input }) => {
+      const existingPayment = await ctx.db.query.payment.findFirst({
+        where: (payments, { eq }) => eq(payments.id, input.id),
+      });
+
+      if (!existingPayment) {
+        throw new Error("Payment not found");
+      }
+
+      // Check permissions
+      if (
+        ctx.session.user.role !== "admin" &&
+        existingPayment.createdById !== ctx.session.user.id
+      ) {
+        throw new Error("Unauthorized");
+      }
+
+      await ctx.db
+        .update(payment)
+        .set({
+          amount: input.amount,
+          paymentForMonth: input.paymentForMonth,
+          note: input.note,
+          proof: input.proof,
+          updatedAt: new Date(),
+        })
+        .where(sql`${payment.id} = ${input.id}`);
+
+      return { success: true };
+    }),
+
+  // Delete payment
+  delete: protectedProcedure
+    .input(z.object({ id: z.string() }))
+    .mutation(async ({ ctx, input }) => {
+      const existingPayment = await ctx.db.query.payment.findFirst({
+        where: (payments, { eq }) => eq(payments.id, input.id),
+      });
+
+      if (!existingPayment) {
+        throw new Error("Payment not found");
+      }
+
+      // Check permissions
+      if (
+        ctx.session.user.role !== "admin" &&
+        existingPayment.createdById !== ctx.session.user.id
+      ) {
+        throw new Error("Unauthorized");
+      }
+
+      await ctx.db.delete(payment).where(sql`${payment.id} = ${input.id}`);
+
+      return { success: true };
     }),
 });

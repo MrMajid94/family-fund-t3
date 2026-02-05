@@ -17,6 +17,16 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
+import {
   Form,
   FormControl,
   FormField,
@@ -56,6 +66,7 @@ export default function SpendingsPage() {
   const utils = api.useUtils();
   const [open, setOpen] = useState(false);
   const [editingId, setEditingId] = useState<string | null>(null);
+  const [deleteId, setDeleteId] = useState<string | null>(null);
 
   // Queries
   const { data: spendings, isLoading } = api.spending.getAll.useQuery();
@@ -322,9 +333,7 @@ export default function SpendingsPage() {
                         size="icon"
                         className="text-destructive hover:text-destructive/90"
                         onClick={() => {
-                          if (confirm("هل أنت متأكد من حذف هذا المصروف؟")) {
-                            deleteSpending.mutate({ id: spending.id });
-                          }
+                          setDeleteId(spending.id);
                         }}
                         disabled={deleteSpending.isPending}
                       >
@@ -338,6 +347,31 @@ export default function SpendingsPage() {
           </TableBody>
         </Table>
       </div>
+
+      <AlertDialog open={!!deleteId} onOpenChange={(open) => !open && setDeleteId(null)}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>هل أنت متأكد؟</AlertDialogTitle>
+            <AlertDialogDescription>
+              هذا الإجراء لا يمكن التراجع عنه. يتم حذف سجل المصروف نهائيًا.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>إلغاء</AlertDialogCancel>
+            <AlertDialogAction
+              className="bg-destructive hover:bg-destructive/90"
+              onClick={() => {
+                if (deleteId) {
+                  deleteSpending.mutate({ id: deleteId });
+                  setDeleteId(null);
+                }
+              }}
+            >
+              حذف
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   );
 }

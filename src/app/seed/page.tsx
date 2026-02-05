@@ -59,6 +59,10 @@ export default function SeedPage() {
 
   const { data: users, isLoading } = api.seed.getUsers.useQuery();
 
+  if (process.env.NODE_ENV === "production") {
+    return null;
+  }
+
   return (
     <div
       dir="rtl"

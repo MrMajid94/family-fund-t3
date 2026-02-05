@@ -6,8 +6,8 @@ import PaymentsClientPage from "./client";
 export default async function PaymentsPage() {
   const session = await getSession();
 
-  if (!session || session.user.role !== "admin") {
-    redirect("/dashboard");
+  if (!session) {
+    redirect("/");
   }
 
   // Prefetch paginated payments and stats

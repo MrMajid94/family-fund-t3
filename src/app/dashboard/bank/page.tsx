@@ -17,6 +17,16 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import {
+    AlertDialog,
+    AlertDialogAction,
+    AlertDialogCancel,
+    AlertDialogContent,
+    AlertDialogDescription,
+    AlertDialogFooter,
+    AlertDialogHeader,
+    AlertDialogTitle,
+  } from "@/components/ui/alert-dialog";
+import {
   Form,
   FormControl,
   FormField,
@@ -51,6 +61,7 @@ export default function BankBalancePage() {
   const router = useRouter();
   const utils = api.useUtils();
   const [open, setOpen] = useState(false);
+  const [deleteId, setDeleteId] = useState<string | null>(null);
 
   // Queries
   const { data: history, isLoading } = api.bankBalance.getHistory.useQuery(undefined, {
@@ -224,9 +235,7 @@ export default function BankBalancePage() {
                         size="icon"
                         className="text-destructive hover:text-destructive/90"
                         onClick={() => {
-                          if (confirm("هل أنت متأكد من حذف هذا السجل؟")) {
-                            deleteEntry.mutate({ id: entry.id });
-                          }
+                          setDeleteId(entry.id);
                         }}
                         disabled={deleteEntry.isPending}
                       >
@@ -239,6 +248,32 @@ export default function BankBalancePage() {
           </TableBody>
         </Table>
       </div>
+      
+      <AlertDialog open={!!deleteId} onOpenChange={(open) => !open && setDeleteId(null)}>
+        <AlertDialogContent>
+        <AlertDialogHeader>
+            <AlertDialogTitle>هل أنت متأكد؟</AlertDialogTitle>
+            <AlertDialogDescription>
+            هذا الإجراء لا يمكن التراجع عنه. يتم حذف سجل الرصيد نهائيًا.
+            </AlertDialogDescription>
+        </AlertDialogHeader>
+        <AlertDialogFooter>
+            <AlertDialogCancel>إلغاء</AlertDialogCancel>
+            <AlertDialogAction
+            className="bg-destructive hover:bg-destructive/90"
+            onClick={() => {
+                if (deleteId) {
+                deleteEntry.mutate({ id: deleteId });
+                setDeleteId(null);
+                }
+            }}
+            >
+            حذف
+            </AlertDialogAction>
+        </AlertDialogFooter>
+        </AlertDialogContent>
+    </AlertDialog>
+
     </div>
   );
 }

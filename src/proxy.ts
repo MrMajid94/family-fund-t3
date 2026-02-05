@@ -1,17 +1,17 @@
 import { type NextRequest, NextResponse } from "next/server";
-import { getSessionCookie } from "better-auth/cookies";
+import { headers } from "next/headers";
+import { auth } from "@/server/better-auth";
 
 /**
  * Next.js 16 Proxy for auth protection
- * Uses cookie-based checks for fast route protection
- * Full session validation should be done in individual pages/routes
+ * Uses full session validation with database checks
  */
 export async function proxy(request: NextRequest) {
-  const sessionCookie = getSessionCookie(request);
+  const session = await auth.api.getSession({
+    headers: await headers(),
+  });
 
-  // Optimistically redirect unauthenticated users
-  // Full auth checks should happen in pages/routes
-  if (!sessionCookie) {
+  if (!session) {
     return NextResponse.redirect(new URL("/", request.url));
   }
 

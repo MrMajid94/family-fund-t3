@@ -6,18 +6,18 @@ import { Card, CardHeader, CardTitle, CardDescription } from "@/components/ui/ca
 
 // Static list of available docs - add new docs here
 const docs = [
-  {
-    slug: "policy",
-    title: "سياسة الصندوق (ويب)",
-    description: "القواعد والإرشادات الخاصة بصندوق العائلة",
-    icon: FileText,
-  },
-  {
-    slug: "recording-payments",
-    title: "كيفية تسجيل دفعة",
-    description: "شرح خطوات تسجيل الدفعات والمساهمات",
-    icon: FileText,
-  },
+  // {
+  //   slug: "policy",
+  //   title: "سياسة الصندوق (ويب)",
+  //   description: "القواعد والإرشادات الخاصة بصندوق العائلة",
+  //   icon: FileText,
+  // },
+  // {
+  //   slug: "recording-payments",
+  //   title: "كيفية تسجيل دفعة",
+  //   description: "شرح خطوات تسجيل الدفعات والمساهمات",
+  //   icon: FileText,
+  // },
   {
     href: "/policy_may_2021.pdf",
     title: "تحميل السياسة (PDF)",

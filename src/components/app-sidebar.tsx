@@ -86,12 +86,7 @@ const data = {
       //   },
       // ],
     },
-    {
-      title: "الإعدادات",
-      url: "/dashboard/settings",
-      icon: Settings2,
-      isAdminOnly: true,
-    },
+    
     {
       title: "أرشيف الدفعات",
       url: "/dashboard/archived-payments",
@@ -113,6 +108,12 @@ const data = {
       title: "الوثائق",
       url: "/dashboard/docs",
       icon: BookOpen,
+    },
+    {
+      title: "الإعدادات",
+      url: "/dashboard/settings",
+      icon: Settings2,
+      isAdminOnly: true,
     },
   ],
   // navSecondary: [
