@@ -1,6 +1,6 @@
-"use client"
+"use client";
 
-import * as React from "react"
+import * as React from "react";
 import {
   BookOpen,
   Bot,
@@ -15,12 +15,12 @@ import {
   Archive,
   CreditCard,
   Landmark,
-} from "lucide-react"
+} from "lucide-react";
 
-import { NavMain } from "@/components/nav-main"
-import { NavProjects } from "@/components/nav-projects"
-import { NavSecondary } from "@/components/nav-secondary"
-import { NavUser } from "@/components/nav-user"
+import { NavMain } from "@/components/nav-main";
+import { NavProjects } from "@/components/nav-projects";
+import { NavSecondary } from "@/components/nav-secondary";
+import { NavUser } from "@/components/nav-user";
 import {
   Sidebar,
   SidebarContent,
@@ -29,15 +29,11 @@ import {
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
-} from "@/components/ui/sidebar"
-import {
-  SidebarProvider,
-  SidebarTrigger,
 } from "@/components/ui/sidebar";
+import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
 import { authClient } from "@/server/better-auth/client";
 
 const data = {
-
   navMain: [
     {
       title: "الرئيسية",
@@ -58,7 +54,7 @@ const data = {
     {
       title: "المدفوعات",
       url: "/dashboard/payments",
-      icon:  PieChart,
+      icon: PieChart,
       isAdminOnly: true,
       // items: [
       //   {
@@ -79,6 +75,7 @@ const data = {
       title: "الأعضاء",
       url: "/dashboard/members",
       icon: Bot,
+      isAdminOnly: true,
       // items: [
       //   {
       //     title: "قائمة الأعضاء",
@@ -90,7 +87,7 @@ const data = {
       //   },
       // ],
     },
-    
+
     {
       title: "أرشيف الدفعات",
       url: "/dashboard/archived-payments",
@@ -139,15 +136,14 @@ const data = {
   //     icon: Frame,
   //   },
   // ],
-}
-
+};
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   const { data: session } = authClient.useSession();
   // @ts-ignore - role exists on user but sometimes TS complains if types aren't fully generated
   const isAdmin = session?.user?.role === "admin";
 
-  const filteredNavMain = data.navMain.filter(item => {
+  const filteredNavMain = data.navMain.filter((item) => {
     // @ts-ignore - safe because we added isAdminOnly optional property
     if (item.isAdminOnly && !isAdmin) return false;
     return true;
@@ -166,7 +162,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
                 <div className="bg-sidebar-primary text-sidebar-primary-foreground flex aspect-square size-8 items-center justify-center rounded-lg">
                   <Command className="size-4" />
                 </div>
-                <div className="grid flex-1 text-sm leading-tight text-right">
+                <div className="grid flex-1 text-right text-sm leading-tight">
                   <span className="truncate font-medium">صندوق العائلة</span>
                   <span className="truncate text-xs">نظام الإدارة</span>
                 </div>
@@ -182,8 +178,8 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
         <NavSecondary items={data.navSecondary} className="mt-auto" /> */}
       </SidebarContent>
       <SidebarFooter>
-        <NavUser  />
+        <NavUser />
       </SidebarFooter>
     </Sidebar>
-  )
+  );
 }

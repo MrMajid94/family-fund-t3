@@ -33,6 +33,8 @@ import { Separator } from "@/components/ui/separator";
 export default function DashboardPage() {
   // Personal stats
   const { data: session } = authClient.useSession();
+  const isAdmin = session?.user?.role === "admin";
+
   const { data: stats, isLoading: statsLoading } =
     api.payment.getMyStats.useQuery();
   const { data: userPayments, isLoading: paymentsLoading } =
@@ -166,7 +168,7 @@ export default function DashboardPage() {
       </div>
 
       {/* Fund Statistics Section */}
-      {session?.user.role === "ADMIN" && (
+      {isAdmin && (
         <div>
           <div className="space-y-4">
             <div className="flex items-center gap-2">
