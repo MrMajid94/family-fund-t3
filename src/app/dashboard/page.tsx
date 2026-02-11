@@ -13,6 +13,7 @@ import {
   addMonths,
   startOfMonth,
   differenceInMonths,
+  subMonths,
 } from "date-fns";
 import { arSA } from "date-fns/locale";
 import {
@@ -76,7 +77,7 @@ export default function DashboardPage() {
       : new Date();
 
     let currentMonth = startOfMonth(startDate);
-    const endMonth = startOfMonth(now);
+    const endMonth = startOfMonth(subMonths(now, 1));
 
     const missing: Date[] = [];
 

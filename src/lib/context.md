@@ -9,11 +9,13 @@ A web application for members of the **Al Shukaili family** (عائلة الشك
 ## Core Functionality
 
 ### 1. User Authentication
+
 - **Login Method**: Phone number serves as both username and password
 - Users are manually seeded into the database by an admin
 - No self-registration - only pre-registered family members can access the system
 
 ### 2. Payment Year Management (إدارة سنوات الدفع)
+
 - **Enabled Years**: Admins enable payment years from the dashboard
   - Example: Enable 2026 to allow users to pay for months in 2026
   - Only months within enabled years are available for payment
@@ -21,13 +23,15 @@ A web application for members of the **Al Shukaili family** (عائلة الشك
 - New years must be explicitly enabled before users can make payments for them
 
 ### 3. Monthly Contributions
+
 - **Default Contribution**: 10 OMR (Omani Rial) per month
 - Members can pay more or less than the default amount
-- **Payment Due Date**: 5th of the following month
-  - Example: January payment is due by February 5th
+- **Payment Due Date**: Last day of the month
+  - Example: January payment is due by January 31st
 - Support for **bulk payments** (e.g., paying for a full year at once)
 
 ### 4. Payment Status & Selection
+
 - **Missed Payments**: Months where no payment has been recorded
 - **Overdue Payments**: Missed payments past their due date (highlighted in red)
   - Example: If today is Feb 6th, January payment is overdue
@@ -36,6 +40,7 @@ A web application for members of the **Al Shukaili family** (عائلة الشك
 - Users select which month(s) to pay when logging a payment
 
 ### 5. Payment Logging
+
 - Manual bank transfer logging only (no online payment integration)
 - Users specify which month(s) they are paying for
 - Multi-month selection allowed for bulk payments
@@ -48,6 +53,7 @@ A web application for members of the **Al Shukaili family** (عائلة الشك
   - `proof`: Optional proof/receipt URL
 
 ### 6. Dashboard Features
+
 - View list of **pending payments** (months not yet paid)
 - View **overdue payments** (past due date, highlighted)
 - View **payment history** (all logged payments)
@@ -59,6 +65,7 @@ A web application for members of the **Al Shukaili family** (عائلة الشك
   - User management
 
 ### 7. Fund Spendings (مصروفات الصندوق)
+
 - Log expenses from the fund
 - Track amount, reason, recipient, date, and notes
 - Visible to all users
@@ -69,12 +76,14 @@ A web application for members of the **Al Shukaili family** (عائلة الشك
 ## Technical Requirements
 
 ### Language & Localization
+
 - **Primary Language**: Arabic (العربية)
 - **Text Direction**: RTL (Right-to-Left)
 - **Currency**: OMR (Omani Rial) - ريال عماني
 - **Date Format**: Arabic/Hijri calendar support optional, Gregorian is primary
 
 ### User Experience
+
 - Mobile-first design (most users will access via phone)
 - Simple, intuitive interface
 - Minimal steps to log a payment
@@ -85,24 +94,27 @@ A web application for members of the **Al Shukaili family** (عائلة الشك
 ## Data Models
 
 ### User (المستخدم)
+
 ```typescript
 {
-  id: string
-  phoneNumber: string      // رقم الهاتف - used as username/password
-  fullName: string         // الاسم الكامل
-  isActive: boolean        // حالة الحساب (default: true)
-  role: 'admin' | 'user'   // صلاحية المستخدم
-  paymentStartDate: Date   // تاريخ بداية الالتزام بالدفع - when payment obligation begins
-  createdAt: Date
+  id: string;
+  phoneNumber: string; // رقم الهاتف - used as username/password
+  fullName: string; // الاسم الكامل
+  isActive: boolean; // حالة الحساب (default: true)
+  role: "admin" | "user"; // صلاحية المستخدم
+  paymentStartDate: Date; // تاريخ بداية الالتزام بالدفع - when payment obligation begins
+  createdAt: Date;
 }
 ```
 
 > [!IMPORTANT]
 > **Payment Accountability Rules:**
+>
 > - **New users**: Admins set `paymentStartDate` when adding a user to define when their payment obligation begins. No overdue payments appear for months before this date.
 > - **Existing/seeded users**: `paymentStartDate` is set to fund establishment date (January 2022), making them accountable for all months since then.
 
 ### Payment (الدفعة) - For 2026+
+
 ```typescript
 {
   id: string
@@ -119,6 +131,7 @@ A web application for members of the **Al Shukaili family** (عائلة الشك
 ```
 
 ### Archived Payment (الدفعة المؤرشفة) - Pre-2026
+
 ```typescript
 {
   id: string
@@ -133,28 +146,31 @@ A web application for members of the **Al Shukaili family** (عائلة الشك
 ```
 
 ### Payment Year (سنة الدفع)
+
 ```typescript
 {
-  id: string
-  year: number             // السنة (e.g., 2025, 2026)
-  monthlyAmount: string    // المبلغ الشهري (default: "10") - stored as text
-  isEnabled: boolean       // مفعّلة/معطّلة
-  createdAt: Date
-  updatedAt: Date
+  id: string;
+  year: number; // السنة (e.g., 2025, 2026)
+  monthlyAmount: string; // المبلغ الشهري (default: "10") - stored as text
+  isEnabled: boolean; // مفعّلة/معطّلة
+  createdAt: Date;
+  updatedAt: Date;
 }
 ```
 
 ### Contribution Period (فترة المساهمة)
+
 ```typescript
 {
-  month: string            // "2024-01" format
-  dueDate: Date            // تاريخ الاستحقاق (5th of next month)
-  defaultAmount: number    // المبلغ الافتراضي (10 OMR)
-  status: 'paid' | 'pending' | 'overdue'  // حالة الدفع
+  month: string; // "2024-01" format
+  dueDate: Date; // تاريخ الاستحقاق (5th of next month)
+  defaultAmount: number; // المبلغ الافتراضي (10 OMR)
+  status: "paid" | "pending" | "overdue"; // حالة الدفع
 }
 ```
 
 ### Fund Spending (مصروفات الصندوق)
+
 ```typescript
 {
   id: string
@@ -168,7 +184,9 @@ A web application for members of the **Al Shukaili family** (عائلة الشك
   updatedAt: Date
 }
 ```
+
 ```
+
 ```
 
 ---
@@ -176,17 +194,20 @@ A web application for members of the **Al Shukaili family** (عائلة الشك
 ## User Flows
 
 ### Login Flow
+
 1. User enters phone number
 2. System validates against pre-seeded users
 3. If valid → redirect to dashboard
 4. If invalid → show error message
 
 ### View Pending Payments
+
 1. Dashboard shows list of unpaid months
 2. Each month shows: month name, due date, default amount
 3. Overdue payments highlighted in red/warning color
 
 ### Log New Payment
+
 1. Click "تسجيل دفعة جديدة" (Log New Payment)
 2. Select month(s) to pay for (multi-select)
 3. Enter amount (pre-filled with calculated default)
@@ -194,6 +215,7 @@ A web application for members of the **Al Shukaili family** (عائلة الشك
 5. Submit → confirmation message
 
 ### View Payment History
+
 1. Access "سجل الدفعات" (Payment History)
 2. See list of all logged payments
 3. Each entry shows: date, amount, months covered
@@ -202,13 +224,13 @@ A web application for members of the **Al Shukaili family** (عائلة الشك
 
 ## Pages Structure
 
-| Route | Page | Description |
-|-------|------|-------------|
-| `/` | Login | Phone number login |
-| `/dashboard` | Dashboard | Overview, pending payments |
-| `/payments` | Payment History | List of all payments |
-| `/payments/new` | New Payment | Form to log payment |
-| `/dashboard/spendings` | Fund Spendings | View and manage fund expenses |
+| Route                  | Page            | Description                   |
+| ---------------------- | --------------- | ----------------------------- |
+| `/`                    | Login           | Phone number login            |
+| `/dashboard`           | Dashboard       | Overview, pending payments    |
+| `/payments`            | Payment History | List of all payments          |
+| `/payments/new`        | New Payment     | Form to log payment           |
+| `/dashboard/spendings` | Fund Spendings  | View and manage fund expenses |
 
 ---
 

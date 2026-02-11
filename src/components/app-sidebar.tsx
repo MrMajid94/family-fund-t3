@@ -15,6 +15,7 @@ import {
   Archive,
   CreditCard,
   Landmark,
+  TrendingUp,
 } from "lucide-react";
 
 import { NavMain } from "@/components/nav-main";
@@ -72,6 +73,12 @@ const data = {
       // ],
     },
     {
+      title: "تحليل المشتركين",
+      url: "/dashboard/admin/users-payments",
+      icon: TrendingUp,
+      isAdminOnly: true,
+    },
+    {
       title: "الأعضاء",
       url: "/dashboard/members",
       icon: Bot,
@@ -98,6 +105,7 @@ const data = {
       title: "المصاريف",
       url: "/dashboard/spendings",
       icon: CreditCard,
+      isAdminOnly: true,
     },
     {
       title: "رصيد البنك",
